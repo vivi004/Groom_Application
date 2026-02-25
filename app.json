@@ -1,0 +1,57 @@
+{
+  "expo": {
+    "name": "groom-application",
+    "slug": "groom-application",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "groom-application",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vivin2204.groomapplication"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.vivin2204.groomapplication"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "75759f26-32f2-4890-902e-80818a6129f9"
+      }
+    },
+    "owner": "vivin_2204",
+    "updates": {
+      "url": "https://u.expo.dev/75759f26-32f2-4890-902e-80818a6129f9"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
+  }
+}
