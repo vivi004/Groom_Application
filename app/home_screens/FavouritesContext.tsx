@@ -45,3 +45,4 @@ export const useFavorites = () => {
   if (!context) throw new Error('useFavorites must be used within a FavoritesProvider');
   return context;
 };
+export default FavoritesContext;
