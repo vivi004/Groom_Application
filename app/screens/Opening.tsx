@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Image, Text, Animated } from 'react-native';
+import { Animated, Image, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Opening = () => {
@@ -21,7 +21,7 @@ const Opening = () => {
                 <Animated.View style={{ opacity: fadeAnim, alignItems: 'center' }}>
                     {/* Logo Section */}
                     <Image
-                        source={require('../../assets/images/main_logo.png')}
+                        source={require('../../assets/images/main_logolight.png')}
                         style={{ width: 180, height: 180 }}
                         resizeMode="contain"
                     />
