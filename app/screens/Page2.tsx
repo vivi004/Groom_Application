@@ -16,7 +16,7 @@ export default function Page2() {
             Try Bridal & Groom{"\n"}Looks Virtually
           </Text>
           <Text className="text-white text-center text-1lg px-4">
-            See how you'll look with makeup trials before booking.
+            See how you&apos;ll look with makeup trials before booking.
           </Text>
         </View>
 

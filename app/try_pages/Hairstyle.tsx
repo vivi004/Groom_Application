@@ -11,6 +11,7 @@ import { ChevronLeft } from 'lucide-react-native';
 import { router } from 'expo-router';
 import Makeup_nav from './Makeup_nav';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../../context/ThemeContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -23,6 +24,7 @@ const HAIRSTYLE_OPTIONS = [
 ];
 
 const Hairstyle = () => {
+  const { isDarkMode } = useTheme();
   const [selectedId, setSelectedId] = useState('3');
   const [activeTab, setActiveTab] = useState('Hairstyle');
   const [isColorMode, setIsColorMode] = useState(false);
@@ -31,8 +33,8 @@ const Hairstyle = () => {
 
   return (
     // SafeAreaView wraps the whole screen but edges control where padding is applied
-    <SafeAreaView className="flex-1 bg-black" edges={['right', 'left']}>
-      <StatusBar barStyle="light-content" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: isDarkMode ? 'black' : 'white' }} edges={['right', 'left']}>
+      <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
       
       <View className="relative flex-1">
         {/* Main Hair Preview - Remains Full Screen */}
@@ -50,9 +52,10 @@ const Hairstyle = () => {
           <View className="px-4 py-2">
             <TouchableOpacity 
               onPress={() => isColorMode ? setIsColorMode(false) : router.back()}
-              className="bg-white/20 w-10 h-10 items-center justify-center rounded-lg"
+              className="w-10 h-10 items-center justify-center rounded-lg"
+              style={{ backgroundColor: 'rgba(236, 234, 234, 0.87)'}}
             >
-              <ChevronLeft color="white" size={24} />
+              <ChevronLeft color="black" size={24} />
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -106,7 +109,7 @@ const Hairstyle = () => {
       </View>
 
       {/* Navigation Footer - Bottom edge padding handled by nested SafeAreaView */}
-      <SafeAreaView edges={['bottom']} className="bg-white">
+      <SafeAreaView edges={['bottom']} style={{ backgroundColor: isDarkMode ? '#121212' : 'white' }}>
         <Makeup_nav activeTab={activeTab} setActiveTab={setActiveTab} />
       </SafeAreaView>
     </SafeAreaView>

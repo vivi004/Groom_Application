@@ -1,7 +1,8 @@
+import { Download, Heart } from 'lucide-react-native';
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { Heart, Download } from 'lucide-react-native';
-import { useFavorites, IdeaItem } from '../home_screens/FavouritesContext';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '../../context/ThemeContext';
+import { IdeaItem, useFavorites } from '../../context/FavouritesContext';
 
 const initialIdeas: IdeaItem[] = [
   {
@@ -56,19 +57,20 @@ const initialIdeas: IdeaItem[] = [
 
 const Ideas = () => {
   const { toggleFavorite, isFavorite } = useFavorites();
+  const { isDarkMode } = useTheme();
 
   return (
     <View className="mt-8 px-4">
-      <Text className="text-xl font-bold mb-4">Wedding Look Ideas</Text>
+      <Text className="text-xl font-bold mb-4 text-black dark:text-white">Wedding Look Ideas</Text>
 
       <View className="flex-row flex-wrap justify-between">
         {initialIdeas.map((item) => {
           const isLiked = isFavorite(item.id);
 
           return (
-            <View key={item.id} className="w-[48%] mb-6">
-              {/* Image Container with Exact Hover/Active Styles */}
-              <View className="h-48 bg-gray-200 rounded-3xl overflow-hidden relative shadow-sm">
+            <View key={item.id} className="w-[31%] mb-6">
+              {/* Image Container */}
+              <View className="h-40 rounded-2xl overflow-hidden relative shadow-md bg-gray-100 dark:bg-[#1A1A1A]">
                 <Image
                   source={item.image}
                   className="w-full h-full"
@@ -76,14 +78,14 @@ const Ideas = () => {
                 />
 
                 {/* Download Overlay */}
-                <TouchableOpacity className="absolute top-2 left-2 bg-white/60 p-2 rounded-xl">
+                <TouchableOpacity className="absolute top-2 left-2 bg-white/90 p-1.5 rounded-lg">
                   <Download size={14} color="black" />
                 </TouchableOpacity>
 
-                {/* Heart Toggle - Linked to Global Context */}
+                {/* Heart Toggle */}
                 <TouchableOpacity
                   onPress={() => toggleFavorite(item)}
-                  className="absolute top-2 right-2 bg-white/60 p-2 rounded-xl"
+                  className="absolute top-2 right-2 bg-white/90 p-1.5 rounded-lg"
                 >
                   <Heart
                     size={14}
@@ -93,12 +95,15 @@ const Ideas = () => {
                 </TouchableOpacity>
               </View>
 
-              {/* Info Area */}
-              <View className="mt-2 px-1">
-                <Text className="text-sm font-bold text-black" numberOfLines={1}>
-                  {item.title}
+              {/* Info Area: Horizontal Alignment */}
+              <View className="mt-2 flex-row justify-between items-center px-0.5">
+                <Text 
+                  className="text-[10px] font-bold flex-1 text-black dark:text-white" 
+                  numberOfLines={1}
+                >
+                  {item.title.split(' ')[0]} {item.title.split(' ')[1] || ''}
                 </Text>
-                <Text className="text-sm text-[#D81B8C] font-bold">
+                <Text className="text-[10px] text-[#D81B8C] font-bold ml-1">
                   {item.price}
                 </Text>
               </View>

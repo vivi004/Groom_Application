@@ -1,97 +1,169 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Mail, Lock, Eye, EyeOff, ChevronLeft } from 'lucide-react-native';
-import { FontAwesome } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
+import { useTheme } from '../../context/ThemeContext';
+import FacebookIcon from "../../assets/icons/Facebook.svg";
+import GoogleIcon from "../../assets/icons/Google.svg";
+import AppleIcon from "../../assets/icons/Apple.svg";
+import { API_URL } from '../../constants/Config';
+import { Alert, ActivityIndicator } from 'react-native';
 
 const Login = () => {
+  const router = useRouter();
+  const { isDarkMode } = useTheme();
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const handleFinish = () => {
-    // Navigate to Lforgot password after 
-    router.replace('/screens/ForgotPassword');
-  };
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+
+  const textColor = isDarkMode ? 'text-white' : 'text-black';
+  const subTextColor = isDarkMode ? 'text-gray-400' : 'text-gray-500';
+  const inputBgColor = isDarkMode ? 'bg-[#1A1A1A]' : 'bg-[#F1F4F9]';
+  const iconColor = isDarkMode ? '#626262' : 'black'; // Subtle back button
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: isDarkMode ? 'black' : 'white' }}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1 px-6"
       >
-        {/* Back Button */}
-        <TouchableOpacity onPress={() => router.replace('/screens/Page3')} className="mt-4 w-10 h-10 items-center justify-center">
-          <ChevronLeft color="black" size={28} />
-        </TouchableOpacity>
+        {/* Header Row */}
+        <View className="flex-row items-center mt-4">
 
-        {/* Header Section */}
-        <View className="items-center mt-2">
-          <Text className="text-3xl font-bold text-[#D81B8C] mt-4">Login</Text>
-          <Text className="text-lg font-semibold text-center mt-4 text-black px-10">
-            Welcome back you've been missed!
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className="w-10 h-10 items-center justify-center"
+          >
+            <ChevronLeft color={iconColor} size={28} />
+          </TouchableOpacity>
+
+          <Text className="flex-1 text-center text-3xl font-bold text-[#D81B8C] mr-10">
+            Login
           </Text>
+
         </View>
 
+        {/* Subtitle */}
+        <Text className={`text-xl font-bold text-center mt-8 ${textColor} px-4`}>
+          Welcome back you&apos;ve been missed!
+        </Text>
+
         {/* Input Fields */}
-        <View className="mt-6">
-          <Text className="text-lg font-bold mb-2">Email Id :</Text>
-          <View className="flex-row items-center bg-[#F1F4F9] rounded-xl px-4 py-4 mb-4">
-            <Mail color="#626262" size={20} />
+        <View className="mt-10">
+          <Text
+            className={`text-xl font-bold mb-4 ${textColor}`}
+            style={{ fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif' }}
+          >
+            Email Id :
+          </Text>
+          <View className={`flex-row items-center ${inputBgColor} rounded-2xl px-5 py-5 mb-6`}>
+            <Mail color={isDarkMode ? "#FFFFFF" : "#626262"} size={24} strokeWidth={2.5} />
             <TextInput
               placeholder="Enter your Email"
-              className="flex-1 ml-3 text-base"
-              placeholderTextColor="#626262"
+              className={`flex-1 ml-4 text-base ${isDarkMode ? 'text-[#A0A0A0]' : 'text-black'}`}
+              placeholderTextColor={isDarkMode ? "#A0A0A0" : "#626262"}
               keyboardType="email-address"
               autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
             />
           </View>
 
-          <Text className="text-lg font-bold mb-2">Password :</Text>
-          <View className="flex-row items-center bg-[#F1F4F9] rounded-xl px-4 py-4">
-            <Lock color="#626262" size={20} />
+          <Text
+            className={`text-xl font-bold mb-4 ${textColor}`}
+            style={{ fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif' }}
+          >
+            Password :
+          </Text>
+          <View className={`flex-row items-center ${inputBgColor} rounded-2xl px-5 py-5`}>
+            <Lock color={isDarkMode ? "#FFFFFF" : "#626262"} size={24} strokeWidth={2.5} />
             <TextInput
               placeholder="Enter your Password"
-              className="flex-1 ml-3 text-base"
-              placeholderTextColor="#626262"
+              className={`flex-1 ml-4 text-base ${isDarkMode ? 'text-[#A0A0A0]' : 'text-black'}`}
+              placeholderTextColor={isDarkMode ? "#A0A0A0" : "#626262"}
               secureTextEntry={!passwordVisible}
+              value={password}
+              onChangeText={setPassword}
             />
             <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
-              {passwordVisible ? <Eye color="black" size={20} /> : <EyeOff color="black" size={20} />}
+              {passwordVisible ? (
+                <Eye color={isDarkMode ? "#FFFFFF" : "black"} size={24} />
+              ) : (
+                <EyeOff color={isDarkMode ? "#FFFFFF" : "black"} size={24} />
+              )}
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity className="items-end mt-3">
-            <Text className="text-[#D81B8C] font-semibold" onPress={handleFinish}>Forgot your password?</Text>
+          <TouchableOpacity
+            className="items-end mt-4"
+            onPress={() => router.push('/screens/ForgotPassword')}
+          >
+            <Text className="text-[#D81B8C] font-semibold text-base">Forgot your password?</Text>
           </TouchableOpacity>
         </View>
 
         {/* Sign In Button */}
         <TouchableOpacity
-          className="bg-[#D81B8C] rounded-xl py-4 items-center mt-8 shadow-lg shadow-pink-300"
+          className="bg-[#D81B8C] rounded-xl py-5 items-center mt-12 shadow-lg shadow-pink-300"
           activeOpacity={0.8}
-          onPress={() => router.replace('/home_screens/Homepage')}
+          onPress={async () => {
+            if (!email || !password) {
+              Alert.alert('Error', 'Please enter both email and password');
+              return;
+            }
+            setLoading(true);
+            try {
+              const response = await fetch(`${API_URL}/api/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+              });
+              const data = await response.json();
+              if (response.ok) {
+                router.push('/home_screens/Homepage');
+              } else {
+                Alert.alert('Error', data.message || 'Login failed');
+              }
+            } catch (error: any) {
+              console.error('Login Network Error:', error);
+              Alert.alert('Error', 'Network request failed. Please check your connection.');
+            } finally {
+              setLoading(false);
+            }
+          }}
+          disabled={loading}
         >
-          <Text className="text-white text-xl font-bold">Sign in</Text>
+          {loading ? (
+            <ActivityIndicator color="white" />
+          ) : (
+            <Text className="text-white text-xl font-bold">Sign in</Text>
+          )}
         </TouchableOpacity>
 
         {/* Social Login */}
-        <View className="items-center mt-10">
-          <Text className="text-[#D81B8C] font-semibold mb-6">Or continue with</Text>
+        <View className="items-center mt-12">
+          <Text className="text-[#D81B8C] font-semibold mb-8 text-lg">Or continue with</Text>
           <View className="flex-row justify-center space-x-6">
-            <SocialIcon name="facebook-official" color="#1877F2" />
-            <TouchableOpacity className="bg-[#F1F4F9] p-3 rounded-xl border border-gray-100 mx-3 shadow-sm">
-              <Image
-                source={require('../../assets/images/google_logo.png')}
-                className="w-8 h-8"
-                resizeMode="contain"
-              />
+            <TouchableOpacity className={`${isDarkMode ? 'bg-[#1A1A1A]' : 'bg-[#F1F4F9]'} p-4 rounded-xl mx-2 shadow-sm`}>
+              <FacebookIcon width={24} height={24} />
             </TouchableOpacity>
-            <SocialIcon name="apple" color="#000000" />
+            <TouchableOpacity className={`${isDarkMode ? 'bg-[#1A1A1A]' : 'bg-[#F1F4F9]'} p-4 rounded-xl mx-2 shadow-sm`}>
+              <GoogleIcon width={24} height={24} />
+            </TouchableOpacity>
+            <TouchableOpacity className={`${isDarkMode ? 'bg-[#1A1A1A]' : 'bg-[#F1F4F9]'} p-4 rounded-xl mx-2 shadow-sm`}>
+              <AppleIcon width={24} height={24} color={isDarkMode ? "white" : "black"} />
+            </TouchableOpacity>
           </View>
         </View>
 
         {/* Footer */}
         <View className="flex-row justify-center mt-auto pb-6">
-          <Text className="text-gray-600">Don't Have a Account? </Text>
+          <Text className={subTextColor}>Don&apos;t Have a Account? </Text>
           <TouchableOpacity onPress={() => router.replace('/screens/SignUp')}>
             <Text className="text-[#D81B8C] font-bold">Signup</Text>
           </TouchableOpacity>
@@ -101,12 +173,4 @@ const Login = () => {
     </SafeAreaView>
   );
 };
-
-// Helper for Social Buttons
-const SocialIcon = ({ name, color }: { name: any, color: string }) => (
-  <TouchableOpacity className="bg-[#F1F4F9] p-3 rounded-xl border border-gray-100 mx-3 shadow-sm">
-    <FontAwesome name={name} size={28} color={color} />
-  </TouchableOpacity>
-);
-
 export default Login;

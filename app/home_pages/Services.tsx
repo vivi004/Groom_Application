@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, ScrollView, Image } from 'react-native';
+import { Image, ScrollView, Text, View } from 'react-native';
+import { useTheme } from '../../context/ThemeContext';
 
 const services = [
   {
@@ -22,16 +23,18 @@ const services = [
 ];
 
 const Services = () => {
+  const { isDarkMode } = useTheme();
+
   return (
     <View className="mt-8">
-      <Text className="px-4 text-xl font-bold mb-4">Our Services</Text>
+      <Text className="px-4 text-xl font-bold mb-4 text-black dark:text-white">Our Services</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-4">
         {services.map((item) => (
           <View key={item.id} className="items-center mr-6">
-            <View className="w-20 h-20 rounded-full bg-gray-200 overflow-hidden border border-gray-100">
+            <View className="w-20 h-20 rounded-full overflow-hidden border bg-gray-200 border-gray-100 dark:bg-gray-800 dark:border-gray-700">
               <Image source={item.image} className="w-full h-full" />
             </View>
-            <Text className="text-xs font-semibold mt-2 text-center w-20">{item.name}</Text>
+            <Text className="text-xs font-semibold mt-2 text-center w-20 text-black dark:text-gray-300">{item.name}</Text>
           </View>
         ))}
       </ScrollView>

@@ -1,16 +1,30 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useTheme } from '../../context/ThemeContext';
+
 import { ChevronLeft } from 'lucide-react-native';
-import { router } from 'expo-router';
+import React, { useEffect, useRef, useState } from 'react';
+import { KeyboardAvoidingView, NativeSyntheticEvent, Platform, Text, TextInput, TextInputKeyPressEventData, TouchableOpacity, View, Alert, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { API_URL } from '../../constants/Config';
 
 const Otp = () => {
+    const router = useRouter();
+    const params = useLocalSearchParams();
+    const email = params.email as string;
+    
+    const { isDarkMode } = useTheme();
     const [timer, setTimer] = useState(25);
-    const [otp, setOtp] = useState(['', '', '', '', '']);
+    const [loading, setLoading] = useState(false);
+
+    const textColor = isDarkMode ? 'text-white' : 'text-black';
+    const inputBgColor = isDarkMode ? 'bg-[#1A1A1A]' : 'bg-[#F1F4F9]';
+    const iconColor = isDarkMode ? '#626262' : 'black';
+
+    const [otp, setOtp] = useState(['', '', '', '', '', '']); // Changed to 6 digits
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-    // Create an array of refs for the 5 input boxes
-    const inputRefs = useRef<Array<TextInput | null>>([]);
+    // Create an array of refs for the 6 input boxes
+    const inputRefs = useRef<(TextInput | null)[]>([]);
 
     const startTimer = () => {
         if (timerRef.current) clearInterval(timerRef.current);
@@ -27,11 +41,15 @@ const Otp = () => {
     };
 
     useEffect(() => {
+        if (!email) {
+            Alert.alert('Error', 'Email is missing. Please restart the process.');
+            router.replace('/screens/ForgotPassword');
+        }
         startTimer();
         return () => {
             if (timerRef.current) clearInterval(timerRef.current);
         };
-    }, []);
+    }, [email, router]);
 
     const handleOtpChange = (value: string, index: number) => {
         if (value.length > 1) {
@@ -43,7 +61,7 @@ const Otp = () => {
         setOtp(newOtp);
 
         // Automatic focus logic: Move to next box if value is entered
-        if (value.length !== 0 && index < 4) {
+        if (value.length !== 0 && index < 5) {
             inputRefs.current[index + 1]?.focus();
         }
     };
@@ -55,46 +73,95 @@ const Otp = () => {
         }
     };
 
-    const handleResend = () => {
+    const handleResend = async () => {
         if (timer === 0) {
-            startTimer();
+            try {
+                const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email }),
+                });
+                
+                if (response.ok) {
+                    Alert.alert('Success', 'A new OTP has been sent to your email.');
+                    startTimer();
+                } else {
+                    const data = await response.json();
+                    Alert.alert('Error', data.message || 'Failed to resend OTP');
+                }
+            } catch (error: any) {
+                Alert.alert('Error', error.message || 'Failed to resend OTP');
+            }
         }
     };
 
-    const handleVerify = () => {
+    const handleVerify = async () => {
         const otpString = otp.join('');
-        if (otpString.length === 5) {
-            console.log("Verifying OTP:", otpString);
-            // Add verification logic here
-            // For now, let's just go back to login or a success screen
-            router.replace('/screens/Login');
+        if (otpString.length === 6) {
+            setLoading(true);
+            try {
+                const response = await fetch(`${API_URL}/api/auth/verify-otp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, otp: otpString }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Invalid OTP');
+                }
+
+                // Success, move to Reset Password screen with reset token
+                router.replace({
+                    pathname: '/screens/ResetPassword',
+                    params: { email, resetToken: data.resetToken }
+                });
+            } catch (error: any) {
+                Alert.alert('Verification Failed', error.message || 'The OTP entered is incorrect or expired.');
+            } finally {
+                setLoading(false);
+            }
         } else {
-            // Show error or shake effect
-            console.log("Please enter full OTP");
+            Alert.alert('Incomplete OTP', 'Please enter the full 6-digit OTP.');
         }
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
+        <SafeAreaView
+            style={{ flex: 1, backgroundColor: isDarkMode ? 'black' : 'white' }}
+        >
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 className="flex-1 px-6"
             >
-                <TouchableOpacity onPress={() => router.replace('/screens/ForgotPassword')} className="mt-4 w-10 h-10 items-center justify-center">
-                    <ChevronLeft color="black" size={28} />
-                </TouchableOpacity>
+                {/* Header Row */}
+<View className="flex-row items-center mt-4">
 
-                <View className="items-center mt-6">
-                    <Text className="text-3xl font-bold text-[#D81B8C]">Verification OTP</Text>
-                    <Text className="text-lg font-semibold text-center mt-8 text-black px-10 leading-6">
-                        Otp Shared to Register{"\n"}E-mail Id
-                    </Text>
-                </View>
+  <TouchableOpacity
+    onPress={() => router.replace('/screens/ForgotPassword')}
+    className="w-10 h-10 items-center justify-center"
+  >
+    <ChevronLeft color={iconColor} size={28} />
+  </TouchableOpacity>
+
+  <Text className="flex-1 text-center text-3xl font-bold text-[#D81B8C] mr-10">
+    Verification OTP
+  </Text>
+
+</View>
+
+{/* Subtitle */}
+<Text className={`text-xl font-bold text-center mt-8 ${textColor} px-4 leading-7`}>
+  OTP Shared to Registered{"\n"}E-mail Id: {email}
+</Text>
 
                 {/* OTP Inputs with Auto-Focus */}
-                <View className="flex-row justify-between mt-12 px-2">
+                <View className="flex-row justify-between mt-12 px-1">
                     {otp.map((digit, index) => (
-                        <View key={index} className="w-14 h-14 bg-[#F1F4F9] rounded-xl items-center justify-center border border-transparent focus-within:border-[#D81B8C]">
+                        <View key={index} className={`w-12 h-14 ${inputBgColor} rounded-xl items-center justify-center`}>
                             <TextInput
                                 ref={(ref) => { inputRefs.current[index] = ref; }}
                                 value={digit}
@@ -102,8 +169,9 @@ const Otp = () => {
                                 onKeyPress={(e) => handleKeyPress(e, index)}
                                 maxLength={1}
                                 keyboardType="number-pad"
-                                className="text-xl font-bold text-black text-center w-full h-full"
+                                className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-black'} text-center w-full h-full`}
                                 selectTextOnFocus
+                                placeholderTextColor={isDarkMode ? "#A0A0A0" : "#626262"}
                             />
                         </View>
                     ))}
@@ -130,11 +198,16 @@ const Otp = () => {
 
                 <View className="mt-auto pb-10">
                     <TouchableOpacity
-                        className="bg-[#D81B8C] rounded-xl py-4 items-center shadow-lg shadow-pink-300"
+                        className="bg-[#D81B8C] rounded-xl py-5 items-center shadow-lg shadow-pink-300"
                         activeOpacity={0.8}
-                        onPress={() => router.replace('/screens/ResetPassword')}
+                        onPress={handleVerify}
+                        disabled={loading}
                     >
-                        <Text className="text-white text-xl font-bold" >Verify</Text>
+                        {loading ? (
+                            <ActivityIndicator color="white" />
+                        ) : (
+                            <Text className="text-white text-xl font-bold" >Verify</Text>
+                        )}
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>

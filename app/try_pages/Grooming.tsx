@@ -11,6 +11,7 @@ import { ChevronLeft, Download } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import Makeup_nav from './Makeup_nav';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../../context/ThemeContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,6 +25,7 @@ const GROOMING_OPTIONS = [
 
 const Grooming = () => {
   const router = useRouter();
+  const { isDarkMode } = useTheme();
   const [selectedId, setSelectedId] = useState('3');
   const [activeTab, setActiveTab] = useState('Grooming');
   const [isColorMode, setIsColorMode] = useState(false);
@@ -33,8 +35,8 @@ const Grooming = () => {
   return (
     // Outer container - We do NOT wrap the whole thing in SafeAreaView 
     // to allow the image to be full screen.
-    <View className="flex-1 bg-black">
-      <StatusBar barStyle="light-content" />
+    <View style={{ flex: 1, backgroundColor: isDarkMode ? 'black' : 'white' }}>
+      <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
       
       <View className="relative flex-1">
         {/* Main Grooming Preview - Edge to Edge */}
@@ -52,13 +54,17 @@ const Grooming = () => {
           <View className="px-4 py-2 flex-row justify-between items-center">
             <TouchableOpacity 
               onPress={() => isColorMode ? setIsColorMode(false) : router.back()}
-              className="bg-white/20 w-10 h-10 items-center justify-center rounded-lg"
+              className="w-10 h-10 items-center justify-center rounded-lg"
+              style={{ backgroundColor: 'rgba(236, 234, 234, 0.87)'}}
             >
-              <ChevronLeft color="white" size={24} />
+              <ChevronLeft color="black" size={24} />
             </TouchableOpacity>
 
-            <TouchableOpacity className="bg-white/20 w-10 h-10 items-center justify-center rounded-lg">
-              <Download color="white" size={20} />
+            <TouchableOpacity 
+              className="w-10 h-10 items-center justify-center rounded-lg"
+              style={{ backgroundColor: 'rgba(236, 234, 234, 0.87)' }}
+            >
+              <Download color="black" size={20} />
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -112,7 +118,7 @@ const Grooming = () => {
       </View>
 
       {/* Navigation Footer - Wrapping this in SafeAreaView with 'bottom' edge ensures fit */}
-      <SafeAreaView edges={['bottom']} className="bg-white">
+      <SafeAreaView edges={['bottom']} style={{ backgroundColor: isDarkMode ? '#121212' : 'white' }}>
         <Makeup_nav activeTab={activeTab} setActiveTab={setActiveTab} />
       </SafeAreaView>
     </View>

@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Image, 
-  TouchableOpacity, 
-  ScrollView, 
-  Dimensions, 
-  StatusBar,
-} from 'react-native';
-import { ChevronLeft, Camera } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import Makeup_nav from './Makeup_nav';
+import { ChevronLeft } from 'lucide-react-native';
+import React, { useState } from 'react';
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StatusBar,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Camera from '../../assets/icons/camera.svg';
+import { useTheme } from '../../context/ThemeContext';
+import Makeup_nav from './Makeup_nav';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,6 +26,7 @@ const MAKEUP_OPTIONS = [
 
 const Makeup = () => {
   const router = useRouter();
+  const { isDarkMode } = useTheme();
   const [selectedId, setSelectedId] = useState('1');
   const [activeTab, setActiveTab] = useState('Makeup');
   const [isColorMode, setIsColorMode] = useState(false);
@@ -31,8 +34,8 @@ const Makeup = () => {
   const selectedOption = MAKEUP_OPTIONS.find(item => item.id === selectedId);
 
   return (
-    <View className="flex-1 bg-black">
-      <StatusBar barStyle="light-content" />
+    <View style={{ flex: 1, backgroundColor: isDarkMode ? 'black' : 'white' }}>
+      <StatusBar barStyle={isDarkMode ? "light-content" : "dark-content"} />
       
       {/* Main Preview Container */}
       <View className="relative flex-1">
@@ -50,26 +53,23 @@ const Makeup = () => {
           <View className="px-4 py-2">
             <TouchableOpacity 
               onPress={() => isColorMode ? setIsColorMode(false) : router.back()}
-              className="bg-white/20 w-10 h-10 items-center justify-center rounded-lg"
+              className="w-10 h-10 items-center justify-center rounded-lg"
+              style={{ backgroundColor: 'rgba(236, 234, 234, 0.87)'}}
             >
-              <ChevronLeft color="white" size={24} />
+              <ChevronLeft color="black" size={24} />
             </TouchableOpacity>
           </View>
         </SafeAreaView>
 
-        {/* Camera Action Button */}
-        {!isColorMode && (
-          <View className="absolute bottom-48 w-full items-center">
-            <TouchableOpacity 
-              activeOpacity={0.8}
-              className="w-20 h-20 rounded-full border-2 border-[#D81B8C] items-center justify-center bg-white/10"
-            >
-              <View className="w-16 h-16 rounded-full bg-[#D81B8C] items-center justify-center">
-                <Camera color="white" size={30} />
-              </View>
-            </TouchableOpacity>
-          </View>
-        )}
+{/* Camera Action Button */}
+<View className="absolute bottom-[150px] w-full items-center">
+  <TouchableOpacity
+    activeOpacity={0.8}
+    className="w-[68px] h-[68px] rounded-full border-[3px] border-[#D81B8C] items-center justify-center bg-[#ECEAEA]"
+  >
+    <Camera width={34} height={34} color="#D81B8C" />
+  </TouchableOpacity>
+</View>
 
         {/* Thumbnail / Color Selection Area */}
         <View className="absolute bottom-0 w-full bg-black/40 py-6">
@@ -120,7 +120,7 @@ const Makeup = () => {
       </View>
 
       {/* 2. BOTTOM SAFE AREA: Fit Navigation Bar correctly */}
-      <SafeAreaView edges={['bottom']} className="bg-white">
+      <SafeAreaView edges={['bottom']} style={{ backgroundColor: isDarkMode ? '#121212' : 'white' }}>
         <Makeup_nav activeTab={activeTab} setActiveTab={setActiveTab} />
       </SafeAreaView>
     </View>

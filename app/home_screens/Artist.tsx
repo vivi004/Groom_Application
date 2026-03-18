@@ -1,8 +1,10 @@
-import React from 'react';
-import { View, Text, Image, FlatList, TouchableOpacity} from 'react-native';
-import { ChevronLeft, Star, Home, Heart, Calendar, User } from 'lucide-react-native';
 import { router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context'; // Keep this one
+import { ChevronLeft, Star } from 'lucide-react-native';
+import React from 'react';
+import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../../context/ThemeContext';
+import Navbar from './Navbar';
 
 // Define the interface for our Artist object
 interface ArtistItem {
@@ -27,38 +29,40 @@ const ARTISTS: ArtistItem[] = [
 ];
 
 const Artist = () => {
+  const { isDarkMode } = useTheme();
   const handleHome = () => router.replace('/home_screens/Homepage' as any);
 
   const renderArtistCard = ({ item }: { item: ArtistItem }) => (
-    <TouchableOpacity 
-      className="flex-1 m-2" 
+    <TouchableOpacity
+      className="flex-1 m-2"
       activeOpacity={0.7}
-      // Casting route to 'any' to satisfy Expo Router's strict navigation types
       onPress={() => router.push(item.route as any)}
     >
-      <Image 
-        source={item.image} 
-        className="w-full h-48 rounded-xl bg-gray-200"
-        resizeMode="cover"
-      />
+      <View className="h-48 rounded-xl overflow-hidden bg-gray-200">
+        <Image
+          source={item.image}
+          className="w-full h-full"
+          resizeMode="cover"
+        />
+      </View>
       <View className="flex-row justify-between items-center mt-2">
-        <Text className="font-bold text-[13px] text-black flex-1" numberOfLines={1}>
+        <Text className={`font-bold text-[13px] flex-1 ${isDarkMode ? 'text-white' : 'text-black'}`} numberOfLines={1}>
           {item.name}
         </Text>
         <View className="flex-row items-center">
           <Star size={10} color="#FFD700" fill="#FFD700" />
-          <Text className="text-[10px] text-gray-500 ml-1">{item.rating}</Text>
+          <Text className={`text-[10px] ml-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>{item.rating}</Text>
         </View>
       </View>
-      <Text className="text-[11px] text-gray-400">{item.specialty}</Text>
+      <Text className={`text-[11px] ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`}>{item.specialty}</Text>
     </TouchableOpacity>
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className={`flex-1 ${isDarkMode ? 'bg-[#121212]' : 'bg-white'}`}>
       <View className="flex-row items-center px-4 py-4">
         <TouchableOpacity onPress={handleHome} hitSlop={20}>
-          <ChevronLeft color="black" size={28} />
+          <ChevronLeft color={isDarkMode ? "white" : "black"} size={28} />
         </TouchableOpacity>
         <Text className="flex-1 text-center text-3xl font-bold text-[#D81B8C] mr-7">
           Artist
@@ -74,27 +78,9 @@ const Artist = () => {
         showsVerticalScrollIndicator={false}
       />
 
-      {/* Bottom Nav */}
-      <View className="absolute bottom-0 w-full bg-white border-t border-gray-100 flex-row justify-around py-3 pb-6">
-        <TouchableOpacity className="items-center" onPress={handleHome}>
-          <Home size={24} color="#9CA3AF" />
-          <Text className="text-[10px] text-gray-400 mt-1">Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center" onPress={() => router.replace('/home_screens/Favourites' as any)}>
-          <Heart size={24} color="#9CA3AF" />
-          <Text className="text-[10px] text-gray-400 mt-1">Favourite</Text>
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center" onPress={() => router.replace('/home_screens/Appointment' as any)}>
-          <Calendar size={24} color="#9CA3AF" />
-          <Text className="text-[10px] text-gray-400 mt-1">Appointment</Text>
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center">
-          <User size={24} color="#D81B8C" fill="#FCE7F3" />
-          <Text className="text-[10px] text-[#D81B8C] font-bold mt-1">Artist</Text>
-        </TouchableOpacity>
-      </View>
+      <Navbar />
     </SafeAreaView>
   );
 };
 
-export default Artist;
+export default Artist;   

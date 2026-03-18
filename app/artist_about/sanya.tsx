@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
-import { ChevronLeft, Star } from 'lucide-react-native';
 import { router } from 'expo-router';
+import { ChevronLeft, Star } from 'lucide-react-native';
+import React, { useState } from 'react';
+import { Image, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../../context/ThemeContext';
 interface ReviewProps {
     name: string;
     time: string;
@@ -39,14 +40,15 @@ const ALL_REVIEWS: ReviewProps[] = [
 ];
 
 const ArtistDetail = () => {
+    const { isDarkMode } = useTheme();
     const [showAll, setShowAll] = useState(false);
 
     const handleBack = () => router.replace('/home_screens/Artist' as any);
-    
+
     const handleBooking = () => {
         router.push({
             pathname: '/home_screens/Appointment',
-            params: { initialStylist: 'Sanya' } 
+            params: { initialStylist: 'Sanya' }
         });
     };
 
@@ -54,59 +56,86 @@ const ArtistDetail = () => {
     const displayedReviews = showAll ? ALL_REVIEWS : ALL_REVIEWS.slice(0, 2);
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
+        <SafeAreaView style={{ flex: 1, backgroundColor: isDarkMode ? 'black' : 'white' }}>
             <View className="flex-row items-center px-4 py-4">
-                <TouchableOpacity onPress={handleBack} hitSlop={20}>
-                    <ChevronLeft color="black" size={28} />
+                <TouchableOpacity
+                    onPress={handleBack}
+                    hitSlop={20}
+                    className="p-2 rounded-xl"
+                    style={{ backgroundColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }}
+                >
+                    <ChevronLeft color={isDarkMode ? "white" : "black"} size={24} />
                 </TouchableOpacity>
-                <Text className="flex-1 text-center text-2xl font-bold text-[#D81B8C] mr-7">Sanya Kapoor</Text>
+                <Text
+                    className="flex-1 text-center text-3xl font-bold text-[#D81B8C]"
+                    style={{ fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif' }}
+                >
+                    Robert
+                </Text>
+                <View className="w-10" />
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 140 }}>
                 {/* Profile Section */}
                 <View className="flex-row px-4 mt-2">
-                    <Image source={require('../../assets/artists/sanya.jpg')} className="w-24 h-24 rounded-xl bg-gray-200" />
+                    <Image
+                        source={require('../../assets/artists/sanya.jpg')}
+                        className="w-28 h-28 rounded-2xl"
+                        style={{ backgroundColor: isDarkMode ? '#1F2937' : '#E5E7EB' }}
+                    />
                     <View className="flex-1 ml-4 justify-center">
-                        <View className="flex-row justify-between items-center">
-                            <Text className="text-lg font-bold">Sanya Kapoor</Text>
+                        <View className="flex-row justify-between items-center mb-1">
+                            <Text className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>Sanya Kapoor</Text>
                             <View className="flex-row items-center">
                                 <Star size={14} color="#FFD700" fill="#FFD700" />
-                                <Text className="text-xs font-bold ml-1">4.8</Text>
+                                <Text className={`text-sm font-bold ml-1 ${isDarkMode ? 'text-white' : 'text-black'}`}>4.8</Text>
                             </View>
                         </View>
-                        <Text className="text-xs text-gray-500 font-semibold mb-1">HD Bridal Airbrush Makeup</Text>
-                        <Text className="text-[10px] text-gray-400 leading-4">Sanya is a certified bridal artist known for creating soft, glowing wedding looks using high-definition airbrush techniques.</Text>
+                        <Text className={`text-sm font-semibold mb-1 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>HD Bridal Airbrush Makeup</Text>
+                        <Text className={`text-xs leading-5 ${isDarkMode ? 'text-gray-500' : 'text-gray-600'}`}>Sanya is a certified bridal artist known for creating soft, glowing wedding looks using high-definition airbrush techniques. She ensures a picture-perfect finish that lasts all day.</Text>
                     </View>
                 </View>
 
                 {/* Gallery Section */}
-                <Text className="px-4 mt-6 text-lg font-bold">Gallery :</Text>
-                <View className="px-4 mt-3">
-                    <View className="flex-row justify-between mb-2">
-                        <Image source={require('../../assets/artists/sanya_gal/img1.jpg')} className="w-[32%] h-32 rounded-xl" />
-                        <Image source={require('../../assets/artists/sanya_gal/img2.png')} className="w-[66%] h-32 rounded-xl" />
+                <Text
+                    className={`px-4 mt-8 text-xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}
+                    style={{ fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif' }}
+                >
+                    Gallery :
+                </Text>
+                <View className="px-4 mt-4">
+                    <View className="flex-row justify-between mb-3">
+                        <Image source={require('../../assets/artists/sanya_gal/img1.jpg')} className="w-[32%] h-36 rounded-2xl" />
+                        <Image source={require('../../assets/artists/sanya_gal/img2.png')} className="w-[66%] h-36 rounded-2xl" />
                     </View>
                     <View className="flex-row justify-between">
                         <View className="w-[66%]">
-                            <View className="flex-row justify-between mb-2">
-                                <Image source={require('../../assets/artists/sanya_gal/img3.jpg')} className="w-[30%] h-36 rounded-xl" />
-                                <Image source={require('../../assets/artists/sanya_gal/img4.png')} className="w-[67%] h-36 rounded-xl" />
+                            <View className="flex-row justify-between mb-3">
+                                <Image source={require('../../assets/artists/sanya_gal/img3.jpg')} className="w-[31%] h-40 rounded-2xl" />
+                                <Image source={require('../../assets/artists/sanya_gal/img4.png')} className="w-[65%] h-40 rounded-2xl" />
                             </View>
                             <View className="flex-row justify-between">
-                                <Image source={require('../../assets/artists/sanya_gal/img5.png')} className="w-[53%] h-32 rounded-xl" />
-                                <Image source={require('../../assets/artists/sanya_gal/img6.png')} className="w-[46%] h-32 rounded-xl" />
+                                <Image source={require('../../assets/artists/sanya_gal/img5.png')} className="w-[53%] h-36 rounded-2xl" />
+                                <Image source={require('../../assets/artists/sanya_gal/img6.png')} className="w-[44%] h-36 rounded-2xl" />
                             </View>
+                        <View className="w-[32%]">
                         </View>
-                        <Image source={require('../../assets/artists/sanya_gal/img7.png')} className="w-[32%] h-[246px] rounded-xl" />
+                        </View>
+                            <Image source={require('../../assets/artists/sanya_gal/img7.png')} className="w-[32%] h-44 rounded-2xl"/>
                     </View>
                 </View>
 
                 {/* Ratings Section */}
-                <Text className="px-4 mt-8 text-lg font-bold">Review :</Text>
-                <View className="px-4 mt-4 flex-row items-center">
-                    <View className="items-center mr-6">
-                        <Text className="text-5xl font-bold">4.3</Text>
-                        <Text className="text-xs text-gray-500">23 ratings</Text>
+                <Text
+                    className={`px-4 mt-10 text-xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}
+                    style={{ fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif' }}
+                >
+                    Review :
+                </Text>
+                <View className="px-4 mt-6 flex-row items-center">
+                    <View className="items-center mr-8">
+                        <Text className={`text-6xl font-bold ${isDarkMode ? 'text-white' : 'text-black'}`}>4.3</Text>
+                        <Text className="text-sm text-gray-500">23 ratings</Text>
                     </View>
                     <View className="flex-1">
                         {[12, 5, 4, 2, 0].map((count, index) => (
@@ -116,10 +145,10 @@ const ArtistDetail = () => {
                                         <Star key={i} size={8} color="#FFD700" fill="#FFD700" />
                                     ))}
                                 </View>
-                                <View className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                <View className="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
                                     <View style={{ width: `${(count / 12) * 100}%` }} className="h-full bg-[#D81B8C]" />
                                 </View>
-                                <Text className="text-[10px] text-gray-400 ml-2 w-4">{count}</Text>
+                                <Text className="text-xs text-gray-500 ml-3 w-5">{count}</Text>
                             </View>
                         ))}
                     </View>
@@ -128,53 +157,61 @@ const ArtistDetail = () => {
                 {/* 3. DYNAMIC REVIEWS LIST */}
                 <View className="px-4 mt-6">
                     {displayedReviews.map((item, index) => (
-                        <ReviewItem 
-                           key={index} 
-                           name={item.name}
-                           time={item.time}
-                           text={item.text}
-                           image={item.image}
+                        <ReviewItem
+                            key={index}
+                            name={item.name}
+                            time={item.time}
+                            text={item.text}
+                            image={item.image}
                         />
                     ))}
                 </View>
 
                 {/* 4. UPDATED SEE ALL BUTTON */}
-                <TouchableOpacity 
-                    onPress={() => setShowAll(!showAll)} 
-                    className="mx-4 mt-4 mb-10 py-3 rounded-xl border border-[#D81B8C] items-center"
+                <TouchableOpacity
+                    onPress={() => setShowAll(!showAll)}
+                    className="mx-4 mt-6 py-4 rounded-2xl bg-white/5 border border-[#D81B8C]/30 items-center"
                 >
-                    <Text className="text-[#D81B8C] font-semibold">
+                    <Text className="text-[#D81B8C] font-bold text-base">
                         {showAll ? "Show Less" : "See All Review"}
                     </Text>
                 </TouchableOpacity>
             </ScrollView>
 
-            <View className="absolute bottom-6 w-full px-4">
-                <TouchableOpacity onPress={handleBooking} className="bg-[#D81B8C] py-4 rounded-xl shadow-md">
-                    <Text className="text-white text-center text-lg font-bold">Book Appointment</Text>
+            <View className="absolute bottom-6 w-full px-6">
+                <TouchableOpacity onPress={handleBooking} className="bg-[#D81B8C] py-5 rounded-2xl shadow-xl">
+                    <Text className="text-white text-center text-xl font-bold">Book Appointment</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
 };
 
-const ReviewItem = ({ name, time, text, image }: ReviewProps) => (
-    <View className="mb-6">
-        <View className="flex-row justify-between items-center mb-2">
-            <View className="flex-row items-center">
-                <Image source={image} className="w-10 h-10 rounded-full bg-gray-100" />
-                <View className="ml-3">
-                    <Text className="font-bold text-sm">{name}</Text>
-                    <View className="flex-row">
-                        {[1, 2, 3, 4].map((i) => <Star key={i} size={10} color="#FFD700" fill="#FFD700" />)}
-                        <Star size={10} color="#D1D5DB" />
+const ReviewItem = ({ name, time, text, image }: ReviewProps) => {
+    const { isDarkMode } = useTheme();
+    return (
+        <View className="mb-8">
+            <View className="flex-row justify-between items-center mb-3">
+                <View className="flex-row items-center">
+                    <Image
+                        source={image}
+                        className="w-12 h-12 rounded-full"
+                        style={{ backgroundColor: isDarkMode ? '#1F2937' : '#E5E7EB' }}
+                    />
+                    <View className="ml-4">
+                        <Text className={`font-bold text-base ${isDarkMode ? 'text-white' : 'text-black'}`}>{name}</Text>
+                        <View className="flex-row mt-1">
+                            {[1, 2, 3, 4, 5].map((i) => (
+                                <Star key={i} size={12} color={i <= 4 ? "#FFD700" : (isDarkMode ? "#444" : "#ddd")} fill={i <= 4 ? "#FFD700" : "transparent"} />
+                            ))}
+                        </View>
                     </View>
                 </View>
+                <Text className="text-xs text-gray-500 font-bold">{time}</Text>
             </View>
-            <Text className="text-xs text-gray-400">{time}</Text>
+            <Text className={`text-sm leading-6 ${isDarkMode ? 'text-gray-400' : 'text-gray-700'}`}>{text}</Text>
         </View>
-        <Text className="text-[11px] text-gray-600 leading-4">{text}</Text>
-    </View>
-);
+    );
+};
 
 export default ArtistDetail;
