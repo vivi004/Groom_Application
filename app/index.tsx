@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
-import Opening from './screens/Opening';
-import Page1 from './screens/Page1';
+import Opening from './opening';
+import Page1 from './page1';
 
 export default function Index() {
   const [isSplashVisible, setIsSplashVisible] = useState(true);
