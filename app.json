@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "groom-application",
-    "slug": "groom-application",
+    "name": "WedzGlow",
+    "slug": "wedzglow",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "groom-application",
+    "scheme": "wedzglow",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -14,7 +14,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -24,14 +24,14 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/icon.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -45,15 +45,12 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "75759f26-32f2-4890-902e-80818a6129f9"
+        "projectId": "93cbe98b-1905-413a-8dc1-695fbacc6f38"
       }
-    },
-    "owner": "vivin_2204",
-    "updates": {
-      "url": "https://u.expo.dev/75759f26-32f2-4890-902e-80818a6129f9"
     },
     "runtimeVersion": {
       "policy": "appVersion"
-    }
+    },
+    "owner": "vivinm2204"
   }
 }
